@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora da Data Provável do Parto (DPP) - Regra de Naegele</title>
+
+	<!-- Script criado por Pablo Phillipe Cândido dos Santos. Lattes: http://lattes.cnpq.br/9500873674712528 -->
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --background-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            /* Pattern sutil de cruzes médicas gerado via SVG para a área da saúde */
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233498db' fill-opacity='0.08'%3E%3Cpath d='M26 26H14v8h12v12h8V34h12v-8H34V14h-8v12z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            padding: 30px;
+            max-width: 650px;
+            width: 100%;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="date"] {
+            flex-grow: 1;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="date"]:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-copy {
+            width: auto;
+            flex-shrink: 0;
+            background-color: #7f8c8d;
+            padding: 12px 20px;
+        }
+
+        .btn-copy:hover {
+            background-color: #636e72;
+        }
+
+        #resultadoArea {
+            display: none;
+            margin-top: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .resultado-box {
+            background-color: #e8f4f8;
+            border-left: 5px solid var(--secondary-color);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .resultado-box span {
+            font-size: 24px;
+            color: var(--primary-color);
+            display: block;
+            margin-top: 5px;
+        }
+
+        .explicacao {
+            background-color: #fcfcfc;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            border-radius: 6px;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .explicacao h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 18px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        ol, ul {
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        li {
+            margin-bottom: 16px;
+        }
+        
+        .box-dica {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #664d03;
+            line-height: 1.5;
+        }
+
+        .box-dica strong {
+            color: #000000;
+        }
+
+        .box-info {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #0c5460;
+        }
+
+        .box-info strong {
+            color: #0b4a53;
+        }
+
+        .footer-note {
+            font-size: 13px;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-top: 15px;
+            text-align: center;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Calculadora da Data Provável do Parto (DPP) - Regra de Naegele</h1>
+    <div class="subtitle">Ferramenta educacional interativa passo a passo</div>
+
+    <div class="form-group">
+        <label for="dataDUM">Data da Última Menstruação (DUM):</label>
+        <div class="input-group">
+            <input type="date" id="dataDUM" required>
+            <button type="button" class="btn-copy" onclick="copiarDUM()" title="Copiar data inserida">📋 Copiar</button>
+        </div>
+    </div>
+
+    <button onclick="calcularNaegele()">Calcular DPP</button>
+
+    <div id="resultadoArea">
+        <div class="resultado-box">
+            A Data Provável do Parto (DPP) é:
+            <span id="dppFinal"></span>
+        </div>
+
+        <div class="explicacao">
+            <h3>Como esse cálculo foi feito?</h3>
+            <p>A <strong>Regra de Naegele</strong> é o cálculo matemático padrão da obstetrícia para a obtenção da Data Provável do Parto (DPP). O passo a passo aplicado à data inserida foi o seguinte:</p>
+            <ul id="passoAPasso"></ul>
+            
+            <div class="box-dica" id="dicaMeses">
+                <!-- A dica sobre os meses será inserida via JavaScript aqui -->
+            </div>
+
+            <!-- O quadro informativo azul -->
+            <div id="infoAnoContainer"></div>
+
+            <div class="footer-note">
+                * O algoritmo do aplicativo corrige anos bissextos e viradas de meses/anos automaticamente.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dispara o cálculo ao apertar "Enter" no campo da data
+    document.getElementById('dataDUM').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            calcularNaegele();
+        }
+    });
+
+    // Função para copiar a data preenchida
+    function copiarDUM() {
+        const inputDum = document.getElementById('dataDUM').value;
+        if (!inputDum) {
+            alert("Por favor, insira uma data no campo DUM antes de copiar.");
+            return;
+        }
+        
+        const [ano, mes, dia] = inputDum.split('-');
+        const dataFormatada = `${dia}/${mes}/${ano}`;
+        
+        navigator.clipboard.writeText(dataFormatada).then(() => {
+            alert(`A data ${dataFormatada} foi copiada!`);
+        }).catch(err => {
+            alert("Erro ao copiar a data.");
+        });
+    }
+
+    function calcularNaegele() {
+        const inputDum = document.getElementById('dataDUM').value;
+        
+        if (!inputDum) {
+            alert("Por favor, insira uma data válida.");
+            return;
+        }
+
+        // Extrai o ano, mês e dia originais
+        const [anoStr, mesStr, diaStr] = inputDum.split('-');
+        const ano = parseInt(anoStr, 10);
+        const mes = parseInt(mesStr, 10);
+        const dia = parseInt(diaStr, 10);
+        
+        const nomeMeses = ["", "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+        const nomeMesOriginal = nomeMeses[mes];
+
+        // Lógica de cálculo real da DPP
+        const dataDPP = new Date(ano, mes - 1, dia);
+        dataDPP.setDate(dataDPP.getDate() + 7);
+        dataDPP.setMonth(dataDPP.getMonth() + 9);
+
+        const opcoesFormato = { day: '2-digit', month: '2-digit', year: 'numeric' };
+        const dppFormatada = dataDPP.toLocaleDateString('pt-BR', opcoesFormato);
+        document.getElementById('dppFinal').innerHTML = `<strong>${dppFormatada}</strong>`;
+
+        // ==========================================
+        // LÓGICA DIDÁTICA DINÂMICA
+        // ==========================================
+        
+        // Descobre quantos dias tem o mês atual da DUM
+        const diasNoMes = new Date(ano, mes, 0).getDate();
+        const somaDias = dia + 7;
+        const virouMes = somaDias > diasNoMes;
+
+        // Cria variáveis "Base" para continuar o cálculo nos Passos 2 e 3
+        let mesBase = mes;
+        let anoBase = ano;
+        let dicaDiasHTML = "";
+
+        if (virouMes) {
+            // Se o usuário inseriu uma data que vira o mês
+            let diaFinal = somaDias - diasNoMes;
+            mesBase = mes + 1;
+            
+            if (mesBase > 12) {
+                mesBase = 1;
+                anoBase = ano + 1; 
+            }
+            let nomeMesSeguinte = nomeMeses[mesBase];
+            let diaFinalFormatado = diaFinal.toString().padStart(2, '0');
+
+            dicaDiasHTML = `
+                <strong>Opa! A soma ultrapassou os dias do mês!</strong><br><br>
+                Como a DUM que você inseriu foi <strong>${dia} de ${nomeMesOriginal} de ${ano} (${dia.toString().padStart(2, '0')}/${mes.toString().padStart(2, '0')}/${ano})</strong>, teríamos:<br>
+                <ul>
+                    <li><strong>Cálculo do dia:</strong> <strong>${dia} + 7 = ${somaDias}</strong>. Como ${nomeMesOriginal} tem <strong>${diasNoMes} dias</strong>, subtraímos o valor da soma pelo número de dias do mês (<strong>${somaDias} &minus; ${diasNoMes} = ${diaFinal}</strong>). Dessa forma, chegamos ao primeiro valor da DPP: O Dia <strong>${diaFinalFormatado}</strong>.<br><br>
+                    Nesse caso, como o dia da DPP será <strong>“${diaFinal}”</strong> e terá ultrapassado a duração do mês da DUM, devemos "pular" para o mês seguinte (<strong>${nomeMesSeguinte}</strong>) e utilizar o número correspondente a ele (<strong>${mesBase.toString().padStart(2, '0')}</strong>) no cálculo do mês da DPP.</li>
+                    <li><strong>Cálculo do mês - Escolha da melhor regra</strong> <strong style="color: #8b0000;">[Leia a subseção "Passo 2 (Meses)" antes]</strong>:<br><br>
+                    Como você já sabe, existem duas regras para o cálculo do mês: uma na qual somamos <strong>9</strong> ao valor do mês da DUM (<strong>Regra do +9</strong>), e uma na qual subtraímos <strong>3</strong> desse valor (<strong>Regra do -3</strong>).<br><br>
+                    Em nosso exemplo dinâmico, como "pulamos" de <strong>${nomeMesOriginal}</strong> para <strong>${nomeMesSeguinte}</strong>, a opção mais simples seria aplicar a regra aplicável ao novo mês de <strong>${nomeMesSeguinte}</strong>!</li>
+                </ul>
+            `;
+        } else {
+            // Exemplo estático formatado
+            dicaDiasHTML = `
+                <strong>E se a soma ultrapassar os dias do mês?</strong><br><br>
+                Se a DUM fosse <strong>26 de Março de 2026 (26/03/2026)</strong>, por exemplo, teríamos:<br><br>
+                <ul>
+                    <li><strong>Cálculo do dia:</strong> <strong>26 + 7 = 33</strong>. Como Março tem <strong>31 dias</strong>, subtraímos o valor da soma pelo número de dias do mês (<strong>33 &minus; 31 = 2</strong>). Dessa forma, chegamos ao primeiro valor da DPP: O Dia <strong>02</strong>.<br><br>
+                    Nesse caso, como o dia da DPP será <strong>“2”</strong> e terá ultrapassado a duração do mês da DUM, devemos "pular" para o mês seguinte (<strong>Abril</strong>) e utilizar o número correspondente a ele (<strong>04</strong>) no cálculo do mês da DPP.</li>
+                    <li><strong>Cálculo do mês - Escolha da melhor regra</strong> <strong style="color: #8b0000;">[Leia a subseção "Passo 2 (Meses)" antes]</strong>:<br><br>
+                    Como você já sabe, existem duas regras para o cálculo do mês: uma na qual somamos <strong>9</strong> ao valor do mês da DUM (<strong>Regra do +9</strong>), e uma na qual subtraímos <strong>3</strong> desse valor (<strong>Regra do -3</strong>).<br><br>
+                    Em nosso exemplo, como "pulamos" de Março para Abril, a opção mais simples seria aplicar a <strong>Regra do -3</strong>.<br><br>
+                    Assim, utilizando o valor de Abril (<strong>04</strong>), iremos subtrair <strong>3</strong> para chegar ao valor do mês da DPP (<strong>4 &minus; 3 = 1</strong>; ou seja, Janeiro)</li>
+                    <li><strong>Cálculo do ano:</strong> Como optamos por usar a <strong>Regra do -3</strong>, devemos somar <strong>1</strong> ao valor do ano da DUM para chegar ao valor do ano da DPP (<strong>2026 + 1 = 2027</strong>).</li>
+                </ul>
+                <em>Resultado final da DPP do exemplo: <strong>02/01/2027</strong>.</em>
+            `;
+        }
+
+        const listaPassos = document.getElementById('passoAPasso');
+        listaPassos.innerHTML = ""; 
+
+        let passosHTML = `<li>
+            <strong>Passo 1 (Dias):</strong> Adicionamos 7 dias ao dia da última menstruação (${dia}).<br> 
+            <em>Cálculo base: <strong>${dia} + 7 = ${somaDias}</strong></em>.
+            <div class="box-dica" style="margin-top: 8px; margin-bottom: 0; padding: 10px;">
+                ${dicaDiasHTML}
+            </div>
+        </li>`;
+
+        const nomeMesBase = nomeMeses[mesBase];
+        const textoAberturaMes = virouMes ? `Como o mês "pulou" para <strong>${nomeMesBase}</strong>` : `Como o mês da DUM é <strong>${nomeMesBase}</strong>`;
+
+        if (mesBase >= 1 && mesBase <= 3) {
+            let mesResultado = mesBase + 9;
+            passosHTML += `<li>
+                <strong>Passo 2 (Meses):</strong> ${textoAberturaMes} (Mês ${mesBase}), a regra manda <strong>somar 9 meses</strong>.<br> <em>Cálculo: Mês ${mesBase} + 9 = Mês ${mesResultado}</em>.
+            </li>`;
+            
+            passosHTML += `<li>
+                <strong>Passo 3 (Anos):</strong><br><br>
+                Para datas-base no primeiro trimestre, o ano não vira. O ano da gestação permanece o mesmo (<strong>${anoBase}</strong>).
+            </li>`;
+        } else {
+            let mesSubtraido = mesBase - 3;
+            let mesSomado = mesBase + 9;
+            
+            if(mesSubtraido <= 0) mesSubtraido += 12; 
+            
+            let mesBasePad = mesBase.toString().padStart(2, '0');
+            let mesSubtraidoPad = mesSubtraido.toString().padStart(2, '0');
+            let mesSomadoPad = mesSomado.toString().padStart(2, '0');
+            let nomeMesDestino = nomeMeses[mesSubtraido]; // Mantido com a primeira letra maiúscula
+            
+            // Prefixo adaptável para o texto
+            let prefixoMes = virouMes ? `como o mês "pulou" para <strong>${nomeMesBase}</strong>` : `se o mês da DUM for <strong>${nomeMesBase}</strong>`;
+            
+            passosHTML += `<li>
+                <strong>Passo 2 (Meses):</strong> Para calcular o mês da DPP, podemos utilizar duas regras distintas: a <strong>Regra do +9</strong> e a <strong>Regra do -3</strong>.<br><br>
+                
+                <ul>
+                    <li style="margin-bottom: 20px;">
+                        <strong>Regra do +9 (De Janeiro a Março):</strong> Nela, <strong>somamos “9”</strong> ao valor do mês da DUM. Se o resultado for <strong>maior que 12</strong>, devemos também <strong>“avançar” para o ano seguinte</strong> e <strong>subtrair 12</strong> do resultado obtido.
+                        
+                        <ul style="margin-top: 12px;">
+                            <li>Assim, ${prefixoMes} (Mês <strong>${mesBasePad}</strong>), o cálculo será: <strong>Mês ${mesBasePad} + 9 = Mês ${mesSomadoPad}</strong></li>
+                            <li>Como o resultado é <strong>maior que 12</strong>, devemos <strong>“avançar” para o ano seguinte</strong> e <strong>subtrair 12</strong> do resultado: <strong>${mesSomadoPad} &minus; 12 = ${mesSubtraidoPad} (${nomeMesDestino})</strong></li>
+                        </ul>
+                    </li>
+                    
+                    <li>
+                        <strong>Regra do -3 (De Abril a Dezembro):</strong> Nela, <strong>subtraímos “3”</strong> do valor do mês da DUM.
+                        
+                        <ul style="margin-top: 12px;">
+                            <li>Assim, ${prefixoMes} (Mês <strong>${mesBasePad}</strong>), o cálculo será: <strong>Mês ${mesBasePad} &minus; 3 = Mês ${mesSubtraidoPad} (${nomeMesDestino})</strong></li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                Tecnicamente, as duas regras sempre produzem o <strong>mesmo resultado</strong>. Contudo, para facilitar os cálculos, podemos dar preferência à <strong>Regra do +9</strong> para os meses de Janeiro a Março e à <strong>Regra do -3</strong> para os meses de Abril a Dezembro.<br><br>
+                Faça algumas simulações sem utilizar uma calculadora e veja como essa estratégia pode facilitar os cálculos.
+            </li>`;
+            
+            passosHTML += `<li>
+                <strong>Passo 3 (Anos):</strong><br><br>
+                <ul>
+                    <li>Se você usou a <strong>Regra do -3</strong>, precisará ajustar o ano manualmente somando 1. <em>(Cálculo: Ano ${anoBase} + 1 = <strong>${anoBase + 1}</strong>)</em>.</li>
+                    <li>Se você usou a <strong>Regra do +9</strong>, não é necessário alterar o valor do ano!</li>
+                </ul>
+            </li>`;
+        }
+
+        listaPassos.innerHTML = passosHTML;
+
+        // Adiciona a explicação detalhada comparativa
+        const boxDicaMeses = document.getElementById('dicaMeses');
+        boxDicaMeses.innerHTML = `
+            <strong>RESUMO PRÁTICO:</strong><br><br>
+            A Regra de Naegele muda dependendo da época do ano. Veja a comparação:<br><br>
+            
+            <strong>👉 Para DUM entre Janeiro e Março (Regra do +9):</strong> A regra é <strong>SOMAR 9 meses</strong> e <strong>MANTER o ano</strong>.<br><br>
+            <em>Exemplo:</em> DUM em 10/02/2026 (Fevereiro).<br><br>
+            - Dias: 10 + 7 = 17<br>
+            - Meses: 2 + 9 = 11 (Novembro)<br>
+            - Ano: Mantém 2026.<br><br>
+            <em>Resultado: DPP em 17/11/2026.</em><br><br>
+
+            <strong>👉 Para DUM entre Abril e Dezembro (Regra do -3):</strong> A regra é <strong>SUBTRAIR 3 meses</strong> e <strong>SOMAR 1 ano</strong>.<br><br>
+            <em>Exemplo:</em> DUM em 10/08/2026 (Agosto).<br><br>
+            - Dias: 10 + 7 = 17<br>
+            - Meses (Subtraindo 3): 8 - 3 = 5 (Maio)<br>
+            - Ano: 2026 + 1 = 2027.<br><br>
+            <em>Resultado: DPP em 17/05/2027.</em>
+        `;
+
+        // Preenche o quadro explicativo final
+        document.getElementById('infoAnoContainer').innerHTML = `
+            <div class="box-info">
+                <strong>Por que a regra clássica manda somar 1 ano ao subtrair 3 meses?</strong><br><br>
+                A gestação dura cerca de 9 meses. Se a mulher engravida de <em>Abril em diante</em>, o parto inevitavelmente ocorrerá no <strong>ano seguinte</strong>.<br><br>
+                A Regra de Naegele usa o "atalho" de recuar 3 meses apenas porque é mais fácil de calcular de cabeça. Para compensar essa viagem ao passado e projetar a data para o futuro correto, nós <strong>somamos 1 ano</strong>.
+            </div>
+        `;
+
+        document.getElementById('resultadoArea').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
