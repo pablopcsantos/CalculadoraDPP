@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora da Data Provável do Parto (DPP) - Regra de Naegele</title>
+    <title>Calculadora da Data Provável do Parto (DPP)</title>
 
 	<!-- Script criado por Pablo Phillipe Cândido dos Santos. Lattes: http://lattes.cnpq.br/9500873674712528 -->
 
@@ -202,6 +202,26 @@
             padding-top: 10px;
         }
 
+        /* Novos estilos para o crédito na base do app */
+        .credit {
+            text-align: center;
+            font-size: 13px;
+            color: #95a5a6;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .credit a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .credit a:hover {
+            text-decoration: underline;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -211,8 +231,8 @@
 <body>
 
 <div class="container">
-    <h1>Calculadora da Data Provável do Parto (DPP) - Regra de Naegele</h1>
-    <div class="subtitle">Ferramenta educacional interativa passo a passo</div>
+    <h1>Calculadora da Data Provável do Parto (DPP)</h1>
+    <div class="subtitle">Calculadora educacional criada a partir da Regra de Naegele</div>
 
     <div class="form-group">
         <label for="dataDUM">Data da Última Menstruação (DUM):</label>
@@ -246,6 +266,11 @@
                 * O algoritmo do aplicativo corrige anos bissextos e viradas de meses/anos automaticamente.
             </div>
         </div>
+    </div>
+
+    <!-- Nova seção de créditos -->
+    <div class="credit">
+        Micro-app criado por <a href="http://lattes.cnpq.br/9500873674712528" target="_blank" rel="noopener noreferrer">Pablo Phillipe Cândido dos Santos</a>
     </div>
 </div>
 
@@ -389,21 +414,21 @@
             let mesBasePad = mesBase.toString().padStart(2, '0');
             let mesSubtraidoPad = mesSubtraido.toString().padStart(2, '0');
             let mesSomadoPad = mesSomado.toString().padStart(2, '0');
-            let nomeMesDestino = nomeMeses[mesSubtraido]; // Mantido com a primeira letra maiúscula
+            let nomeMesDestino = nomeMeses[mesSubtraido]; 
             
-            // Prefixo adaptável para o texto
-            let prefixoMes = virouMes ? `como o mês "pulou" para <strong>${nomeMesBase}</strong>` : `se o mês da DUM for <strong>${nomeMesBase}</strong>`;
+            // Prefixo adaptável para o texto (agora sem negrito em volta das variáveis)
+            let prefixoMes = virouMes ? `como o mês "pulou" para ${nomeMesBase}` : `se o mês da DUM for ${nomeMesBase}`;
             
             passosHTML += `<li>
                 <strong>Passo 2 (Meses):</strong> Para calcular o mês da DPP, podemos utilizar duas regras distintas: a <strong>Regra do +9</strong> e a <strong>Regra do -3</strong>.<br><br>
                 
                 <ul>
                     <li style="margin-bottom: 20px;">
-                        <strong>Regra do +9 (De Janeiro a Março):</strong> Nela, <strong>somamos “9”</strong> ao valor do mês da DUM. Se o resultado for <strong>maior que 12</strong>, devemos também <strong>“avançar” para o ano seguinte</strong> e <strong>subtrair 12</strong> do resultado obtido.
+                        <strong>Regra do +9 (De Janeiro a Março):</strong> Nela, <strong>somamos “9”</strong> ao valor do mês da DUM. Se o resultado for <strong>maior que 12</strong>, devemos também “avançar” para o ano seguinte e subtrair 12 do resultado obtido.
                         
                         <ul style="margin-top: 12px;">
-                            <li>Assim, ${prefixoMes} (Mês <strong>${mesBasePad}</strong>), o cálculo será: <strong>Mês ${mesBasePad} + 9 = Mês ${mesSomadoPad}</strong></li>
-                            <li>Como o resultado é <strong>maior que 12</strong>, devemos <strong>“avançar” para o ano seguinte</strong> e <strong>subtrair 12</strong> do resultado: <strong>${mesSomadoPad} &minus; 12 = ${mesSubtraidoPad} (${nomeMesDestino})</strong></li>
+                            <li>Assim, ${prefixoMes} (Mês ${mesBasePad}), o cálculo será: <strong>Mês ${mesBasePad} + 9 = Mês ${mesSomadoPad}</strong></li>
+                            <li>Como o resultado é <strong>maior que 12</strong>, devemos “avançar” para o ano seguinte e subtrair 12 do resultado: <strong>${mesSomadoPad} &minus; 12 = ${mesSubtraidoPad} (${nomeMesDestino})</strong></li>
                         </ul>
                     </li>
                     
@@ -411,7 +436,7 @@
                         <strong>Regra do -3 (De Abril a Dezembro):</strong> Nela, <strong>subtraímos “3”</strong> do valor do mês da DUM.
                         
                         <ul style="margin-top: 12px;">
-                            <li>Assim, ${prefixoMes} (Mês <strong>${mesBasePad}</strong>), o cálculo será: <strong>Mês ${mesBasePad} &minus; 3 = Mês ${mesSubtraidoPad} (${nomeMesDestino})</strong></li>
+                            <li>Assim, ${prefixoMes} (Mês ${mesBasePad}), o cálculo será: <strong>Mês ${mesBasePad} &minus; 3 = Mês ${mesSubtraidoPad} (${nomeMesDestino})</strong></li>
                         </ul>
                     </li>
                 </ul>
