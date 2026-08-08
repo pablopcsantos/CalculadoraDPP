@@ -1,4 +1,4 @@
-# Calculadora da Data Provável do Parto (DPP)
+# Calculadora da Data Provável do Parto (DPP) - Regra de Naegele
 
 O projeto é uma Calculadora da Data Provável do Parto (DPP) baseada na clássica Regra de Naegele. É uma ferramenta web educacional e interativa que vai além de fornecer a data final: ela detalha o cálculo passo a passo (dias, meses e anos). O aplicativo explica de forma didática o uso da Regra do +9 e da Regra do -3 para facilitar o estudo clínico.
 
@@ -21,7 +21,7 @@ Este projeto é *Single File* (Arquivo Único) e não possui dependências exter
 
 ## ⚙️ Como Utilizar
 
-1. Faça o download do arquivo `calculadoradpp.html`.
+1. Faça o download do arquivo `CalculadoradeNagele.html`.
 2. Abra o arquivo em qualquer navegador web (Google Chrome, Firefox, Safari, Edge, etc.). *Não é necessário instalar nada nem rodar um servidor local.*
 3. Selecione a **Data da Última Menstruação (DUM)** no seletor ou digite a data.
 4. Clique no botão **Calcular DPP** (ou pressione a tecla *Enter*).
@@ -34,3 +34,9 @@ A regra de Naegele é a fórmula matemática clássica padronizada na prática o
 2. **Meses/Anos:** 
    - **Regra do +9:** Para meses de Janeiro a Março, soma-se 9 meses (o ano do parto será o mesmo).
    - **Regra do -3:** Para meses de Abril a Dezembro, subtrai-se 3 meses e adiciona-se 1 ano (para compensar a transição do ano civil).
+
+## 👤 Autoria e desenvolvimento
+
+Micro-app educacional desenvolvido de forma independente por **Pablo Phillipe Cândido dos Santos**, destinado ao apoio ao ensino e à aprendizagem do cálculo da Data Provável do Parto pela Regra de Naegele.
+
+O desenvolvimento contou com a utilização de ferramentas de inteligência artificial generativa como recurso auxiliar no processo de desenvolvimento, mantendo-se sob responsabilidade do autor a concepção, implementação, integração e verificação do aplicativo.
