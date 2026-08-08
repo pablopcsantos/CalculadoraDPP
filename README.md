@@ -37,6 +37,6 @@ A regra de Naegele é a fórmula matemática clássica padronizada na prática o
 
 ## 👤 Autoria e desenvolvimento
 
-Micro-app educacional desenvolvido de forma independente por **Pablo Phillipe Cândido dos Santos**, destinado ao apoio ao ensino e à aprendizagem do cálculo da Data Provável do Parto pela Regra de Naegele.
+Micro-app educacional desenvolvido de forma independente por [**Pablo Phillipe Cândido dos Santos**](http://lattes.cnpq.br/9500873674712528), destinado ao apoio ao ensino e à aprendizagem do cálculo da Data Provável do Parto pela Regra de Naegele.
 
 O desenvolvimento contou com a utilização de ferramentas de inteligência artificial generativa como recurso auxiliar no processo de desenvolvimento, mantendo-se sob responsabilidade do autor a concepção, implementação, integração e verificação do aplicativo.
